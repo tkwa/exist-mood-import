@@ -14,7 +14,7 @@ def mood_from_row(row, mood_tags):
     active_tags = [int(i) for i in row[7:]]
     active_indices = [i for (i, t) in enumerate(active_tags) if t == 1]
     tags = set([mood_tags[i] for i in active_indices])
-    normalized_level = int(row[4]) // 2
+    normalized_level = int(row[4]) // 2  # converts 1 on 1-10 scale to 0 on 1-5 scale??
     return Mood(date=d, level=normalized_level, comment=row[6], tags=tags)
 
 def import_csv(csv_file_name):

@@ -5,6 +5,7 @@ import requests, json
 import auth
 import imoodjournal
 import daylio
+import roam
 import os
 import itertools
 
@@ -53,12 +54,22 @@ def publish_data(moods, token):
 
 
 def do_import(mood_data_file, token):
-    try:
-        mood_data = imoodjournal.import_csv(mood_data_file)
-        data_type = "imoodjournal"
-    except ValueError:
-        mood_data = daylio.import_csv(mood_data_file)
-        data_type = "daylio"
+
+    extn = ".".split(mood_data_file)[-1]
+    if extn == "csv":
+        try:
+            mood_data = imoodjournal.import_csv(mood_data_file)
+            data_type = "imoodjournal"
+        except ValueError:
+            mood_data = daylio.import_csv(mood_data_file)
+            data_type = "daylio"
+
+    elif extn == "json":
+        mood_data = roam.import_json(mood_data_file)
+        data_type = "roam"
+    else:
+        raise ValueError('Unknown file format.')
+
     print(f"Loaded {data_type} data. Starting import...")
     attrs = ["mood", "mood_note", "custom"]
     try:

@@ -2,6 +2,13 @@ from collections import namedtuple
 
 # TODO: extend to include custom attributes
 
+"""
+An object representing mood and tags for a given day.
+date: a `datetime` object
+level: mood level on a 1-5 integer scale
+comment: daily mood note. Note Exist has a 250 char limit as of 6/2020
+tags: a set of strings representing tags for that day
+"""
 Mood = namedtuple('Mood', ['date', 'level', 'comment', 'tags'])
 
 MoodData = namedtuple('MoodData', ['mood_tags', 'moods'])
