@@ -1,5 +1,7 @@
 from collections import namedtuple
 
+# TODO: extend to include custom attributes
+
 Mood = namedtuple('Mood', ['date', 'level', 'comment', 'tags'])
 
 MoodData = namedtuple('MoodData', ['mood_tags', 'moods'])
