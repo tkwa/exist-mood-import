@@ -1,11 +1,12 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import simple_https
 import urllib
 import threading
 import webbrowser
 import requests
 import os
 
-CLIENT_ID = '21c2af8828250ddc0fc5'
+CLIENT_ID = 'b2cc1c864bed962e73b9'
 
 CODE = None
 
@@ -35,20 +36,26 @@ def run_server(server_class=HTTPServer, handler_class=RequestHandler, port=9192)
     httpd.socket.close()
 
 def obtain_auth_code():
-    webbrowser.open('https://exist.io/oauth2/authorize?response_type=code&client_id=%s&scope=%s' % (CLIENT_ID, "read+write"))
-    run_server()
+    redirect_uri= "https://localhost/"
+    webbrowser.open('https://exist.io/oauth2/authorize?response_type=code&client_id=%s&scope=%s' %
+                    (CLIENT_ID, "read+write"))
+    # run_server()
     return CODE
 
 def get_oauth_token(code):
     url = 'https://exist.io/oauth2/access_token'
-    client_secret = os.environ['CLIENT_SECRET']
+    # client_secret = os.environ['CLIENT_SECRET']
+    print("Auth is broken; paste your client secret below")
+    CLIENT_SECRET = input()
     response = requests.post(url,
                {'grant_type':'authorization_code',
                 'code':code,
                 'client_id':CLIENT_ID,
-                'client_secret':client_secret})
+                'client_secret':CLIENT_SECRET})
     return response.json()['access_token']
 
 def token():
     code = obtain_auth_code()
+    print("Auth is broken; paste your code below")
+    code = input()
     return get_oauth_token(code)

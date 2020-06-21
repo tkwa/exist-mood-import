@@ -21,7 +21,7 @@ def mood_from_page(page, date):
     :param date: The date represented
     :return: A Mood object for that day. Fields not specified are None.
     """
-    print("Importing page", page["title"])
+    print("Importing page", page["title"], ": ", end='')
 
     level = comment = None
     tags = set()
@@ -33,26 +33,27 @@ def mood_from_page(page, date):
     for block in page["children"]:
         string = block["string"]
         if string.startswith("tags::"):
-            print("Found tags block")
             # Add all space-separated words in the string, but not "tags::" itself
             tags |= set([m.group(1) for m in re.finditer(r"#?(\w+)", string)][1:])
 
             # Add all "attr::" children of the block as tags
-            for child in block["children"]:
-                match = re.fullmatch(r"(\w+)::\s*(.*)", child["string"])  # match at start of string
-                if not match: continue
+            try:
+                for child in block["children"]:
+                    match = re.fullmatch(r"(\w+)::\s*(.*)", child["string"])  # match at start of string
+                    if not match: continue
 
-                tag, rest = match.group(1, 2)
-                if tag == "mood":
-                    try:
-                        level = int(re.search("\d+", rest).group(0))
-                    except:
-                        print(f"Failed to parse mood {rest}")
-                elif tag == "note" or tag == "comment":
-                    comment = rest.strip()
-                    # TODO support note as child of "note" block
-                else:
-                    tags.add(tag)
+                    tag, rest = match.group(1, 2)
+                    if tag == "mood":
+                        try:
+                            level = int(re.search("\d+", rest).group(0))
+                        except:
+                            print(f"Failed to parse mood {rest}")
+                    elif tag == "note" or tag == "comment":
+                        comment = rest.strip()
+                        # TODO support note as child of "note" block
+                    else:
+                        tags.add(tag)
+            except KeyError: pass
 
     ret = Mood(date, level, comment, tags)
     print(ret)

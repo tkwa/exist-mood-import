@@ -48,14 +48,14 @@ def publish_data(moods, token):
     for mood in moods:
         attrs += attributes(mood)
     url = 'https://exist.io/api/1/attributes/update/'
-    response = requests.post(url, headers={'Authorization':f"Bearer {token}"},
+    response = requests.post(url, headers={'Authorization':f"Bearer {token}", "Content-Type": "application/json"},
         json=attrs)
     return response
 
 
 def do_import(mood_data_file, token):
 
-    extn = ".".split(mood_data_file)[-1]
+    extn = mood_data_file.split('.')[-1]
     if extn == "csv":
         try:
             mood_data = imoodjournal.import_csv(mood_data_file)
@@ -74,12 +74,13 @@ def do_import(mood_data_file, token):
     attrs = ["mood", "mood_note", "custom"]
     try:
         acquire_attrs(attrs, token)
-        chunk_size = 5
+        chunk_size = 1
         chunk_count = (len(mood_data) // chunk_size) + 1
         for (i, moods) in enumerate(group(mood_data, chunk_size)):
             res = publish_data(moods, token)
             if res.status_code != 200:
-                print(f"Error sending request {res.json()}")
+                print(f"Error sending request {res}")
+                print(res.json)
             else:
                 json = res.json()
                 failed = json['failed']
