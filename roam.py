@@ -12,6 +12,12 @@ def date_of_title(title):
     return date
 
 
+def make_tag_name(s):
+    # Keep only alphanumerics and underscores; convert space to underscore
+    s = re.sub(r'\s+', '_', s, 0)
+    return re.sub(r'[\W]+', '', s, 0)
+
+
 def mood_from_page(page, date):
     """
     Constructs a mood object from a Roam page.
